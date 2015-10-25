@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: knock
-# Recipe:: default
+# Library:: matchers
 #
 # Copyright 2015 Jonathan Hartman
 #
@@ -18,6 +18,12 @@
 # limitations under the License.
 #
 
-knock_app 'default' do
-  source node['knock']['app']['source']
+if defined?(ChefSpec)
+  ChefSpec.define_matcher(:knock_app)
+
+  %i(install remove).each do |action|
+    define_method("#{action}_knock_app") do |name|
+      ChefSpec::Matchers::ResourceMatcher.new(:knock_app, action, name)
+    end
+  end
 end

@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: knock
-# Recipe:: default
+# Attributes:: default
 #
 # Copyright 2015 Jonathan Hartman
 #
@@ -18,6 +18,4 @@
 # limitations under the License.
 #
 
-knock_app 'default' do
-  source node['knock']['app']['source']
-end
+default['knock']['app']['source'] = nil
