@@ -10,65 +10,63 @@ Knock Cookbook
 [codeclimate]: https://codeclimate.com/github/RoboticCheese/knock-chef
 [coveralls]: https://coveralls.io/r/RoboticCheese/knock-chef
 
-TODO: Enter the cookbook description here.
+A Chef cookbook for the Knock app.
 
 Requirements
 ============
 
-TODO: Describe cookbook dependencies.
+As Knock for desktop only supports OS X platforms, so does this cookbook.
 
 Usage
 =====
 
-TODO: Describe how to use the cookbook.
+Either add the default recipe to your node's run_list or use the included
+resources in a recipe of your own.
 
 Recipes
 =======
 
 ***default***
 
-TODO: Describe each component recipe.
+Does a simple, attribute-driven Knock install.
 
 Attributes
 ==========
 
 ***default***
 
-TODO: Describe any noteworthy attributes.
+By default, the Knock app package will be downloaded from the Knock website. A
+specific package path can be set to override this behavior:
+
+    default['knock']['app']['source'] = nil
 
 Resources
 =========
 
-***knock***
+***knock_app***
 
-TODO: Describe each included resource.
+Resource for managing Knock app installation.
 
 Syntax:
 
-    knock 'my_resource' do
-        attribute1 'value1'
-        action :create
+    knock_app 'default' do
+        source 'http://example.com/knock.zip'
+        action :install
     end
 
 Actions:
 
-| Action  | Description  |
-|---------|--------------|
-| action1 | Do something |
+| Action     | Description             |
+|------------|-------------------------|
+| `:install` | Install the Knock app   |
+| `:remove`  | Uninstall the Knock app |
 
 Attributes:
 
-| Attribute  | Default        | Description          |
-|------------|----------------|----------------------|
-| attribute1 | `'some_value'` | Do something         |
-| action     | `:create`      | Action(s) to perform |
-
-Providers
-=========
-
-TODO: Describe each included provider
-
-***Chef::Provider::SomeProvider***
+| Attribute | Default   | Description                      |
+|-----------|-----------|----------------------------------|
+| source    | `nil`     | Optional package download source |
+| action    | `:create` | Action(s) to perform             |
 
 Contributing
 ============
