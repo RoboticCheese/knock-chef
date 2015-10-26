@@ -29,6 +29,10 @@ describe 'resource_knock_app::mac_os_x::10_10' do
     end
 
     shared_examples_for 'any attribute set' do
+      it 'installs a knock_app resource' do
+        expect(chef_run).to install_knock_app('default')
+      end
+
       it 'extracts and installs the package file' do
         expect(chef_run).to run_execute(
           "unzip -d /Applications #{Chef::Config[:file_cache_path]}/knock.zip"

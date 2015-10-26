@@ -20,9 +20,15 @@ RSpec.configure do |c|
     FileUtils.ln_s(File.expand_path('../..', __FILE__), link_path)
     c.cookbook_path = [COOKBOOK_PATH,
                        File.expand_path('../support/cookbooks', __FILE__)]
+
+    FILE_CACHE_PATH = Dir.mktmpdir('chefspec-cache')
+    c.file_cache_path = FILE_CACHE_PATH
   end
 
-  c.after(:suite) { FileUtils.rm_r(COOKBOOK_PATH) }
+  c.after(:suite) do
+    FileUtils.rm_r(FILE_CACHE_PATH)
+    FileUtils.rm_r(COOKBOOK_PATH)
+  end
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
