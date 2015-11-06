@@ -5,7 +5,8 @@ require_relative '../../libraries/resource_knock_app'
 
 describe Chef::Resource::KnockApp do
   let(:name) { 'default' }
-  let(:resource) { described_class.new(name, nil) }
+  let(:run_context) { ChefSpec::SoloRunner.new.converge.run_context }
+  let(:resource) { described_class.new(name, run_context) }
 
   describe '#initialize' do
     it 'sets the correct resource name' do
@@ -58,61 +59,61 @@ describe Chef::Resource::KnockApp do
     end
   end
 
-  describe '#action_install' do
-    before(:each) do
-      %i(remote_file execute).each do |r|
-        allow_any_instance_of(described_class).to receive(r)
+  describe 'Chef::Resource::KnockApp action provider' do
+    let(:provider) { resource.provider.new(resource, run_context) }
+
+    describe '#action_install' do
+      before(:each) do
+        %i(remote_file execute).each do |r|
+          allow(provider).to receive(r)
+        end
+        allow(provider).to receive(:remote_path)
+          .and_return('http://example.com/knock.zip')
+        allow(provider).to receive(:download_path).and_return('/tmp/knock.zip')
       end
-      allow_any_instance_of(described_class).to receive(:remote_path)
-        .and_return('http://example.com/knock.zip')
-      allow_any_instance_of(described_class).to receive(:download_path)
-        .and_return('/tmp/knock.zip')
+
+      it 'downloads the Knock .zip file' do
+        p = provider
+        expect(p).to receive(:remote_file).with('/tmp/knock.zip').and_yield
+        expect(p).to receive(:source).with('http://example.com/knock.zip')
+        expect(p).to receive(:only_if).and_yield
+        expect(File).to receive(:exist?).with('/Applications/Knock.app')
+        p.action_install
+      end
+
+      it 'extracts the Knock .zip file' do
+        p = provider
+        expect(p).to receive(:execute)
+          .with('unzip -d /Applications /tmp/knock.zip').and_yield
+        expect(p).to receive(:creates).with('/Applications/Knock.app')
+        p.action_install
+      end
     end
 
-    it 'downloads the Knock .zip file' do
-      pending
-      r = resource
-      expect(r).to receive(:remote_file).with('/tmp/knock.zip').and_yield
-      expect(r).to receive(:source).with('http://example.com/knock.zip')
-      expect(r).to receive(:only_if).and_yield
-      expect(File).to receive(:exist?).with('/Applications/Knock.app')
-      r.action_install
-    end
+    describe '#action_remove' do
+      before(:each) do
+        allow(provider).to receive(:directory)
+      end
 
-    it 'extracts the Knock .zip file' do
-      pending
-      r = resource
-      expect(r).to receive(:execute)
-        .with('unzip -d /Applications /tmp/knock.zip').and_yield
-      expect(r).to receive(:creates).with('/Applications/Knock.app')
-      r.action_install
-    end
-  end
-
-  describe '#action_remove' do
-    before(:each) do
-      allow_any_instance_of(described_class).to receive(:directory)
-    end
-
-    [
-      File.expand_path('~/Application Support/Knock'),
-      File.expand_path('~/Library/Logs/Knock'),
-      '/Applications/Knock.app'
-    ].each do |dir|
-      it "deletes the '#{dir}' directory" do
-        pending
-        r = resource
-        expect(r).to receive(:directory).with(dir).and_yield
-        expect(r).to receive(:recursive).with(true)
-        expect(r).to receive(:action).with(:delete)
-        r.action_remove
+      [
+        File.expand_path('~/Library/Application Support/Knock'),
+        File.expand_path('~/Library/Logs/Knock'),
+        '/Applications/Knock.app'
+      ].each do |dir|
+        it "deletes the '#{dir}' directory" do
+          p = provider
+          expect(p).to receive(:directory).with(dir).and_yield
+          expect(p).to receive(:recursive).with(true)
+          expect(p).to receive(:action).with(:delete)
+          p.action_remove
+        end
       end
     end
   end
 
   describe '#download_path' do
     before(:each) do
-      allow_any_instance_of(described_class).to receive(:remote_path)
+      allow(resource).to receive(:remote_path)
         .and_return('http://example.com/knock.zip')
     end
 
