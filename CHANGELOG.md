@@ -1,6 +1,10 @@
 Knock Cookbook CHANGELOG
 ========================
 
+v0.1.0 (2015-11-08)
+-------------------
+- Initial release
+
 v0.0.1 (2015-10-23)
 -------------------
 - Development started
