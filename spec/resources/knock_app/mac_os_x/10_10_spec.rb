@@ -1,5 +1,4 @@
 require_relative '../../../spec_helper'
-require_relative '../../../../libraries/resource_knock_app'
 
 describe 'resource_knock_app::mac_os_x::10_10' do
   let(:source) { nil }
@@ -21,7 +20,7 @@ describe 'resource_knock_app::mac_os_x::10_10' do
 
     before(:each) do
       allow(Net::HTTP).to receive(:get_response)
-        .with(URI(Chef::Resource::KnockApp::URL))
+        .with(URI('http://knocktounlock.com/download'))
         .and_return('location' => 'http://example.com/knock.zip')
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?)
