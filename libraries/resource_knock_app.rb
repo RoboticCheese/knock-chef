@@ -27,8 +27,8 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class KnockApp < Resource
-      URL ||= 'http://knocktounlock.com/download'
-      PATH ||= '/Applications/Knock.app'
+      URL ||= 'http://knocktounlock.com/download'.freeze
+      PATH ||= '/Applications/Knock.app'.freeze
 
       provides :knock_app, platform_family: 'mac_os_x'
 

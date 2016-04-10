@@ -17,6 +17,6 @@ suites:
     run_list:
       - recipe[knock]
     attributes:
-  - name: uninstall
+  - name: remove
     run_list:
-      - recipe[knock_test::uninstall]
+      - recipe[knock_test::remove]
